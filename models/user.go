@@ -25,6 +25,12 @@ func (user User) GetUsers() ([]User, error) {
 	return users, result.Error
 }
 
+func (user User) GetUsersWithoutUsed(count int) ([]User, error) {
+	var users []User
+	result := DB.Where("status = ?", 0).Limit(count).Find(&users)
+	return users, result.Error
+}
+
 func (User) GetUserDataById(id string) (*User, error) {
 	pid, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
@@ -47,8 +53,8 @@ func (user *User) Create() error {
 func (user *User) CreateAll(users []User) error {
 	return DB.Create(users).Error
 }
-func (user *User) Update(column map[string]interface{}) error {
-	return DB.Model(user).Updates(column).Error
+func (user *User) Update(column interface{}) error {
+	return DB.Save(column).Error
 }
 
 func (user *User) Delete() error {

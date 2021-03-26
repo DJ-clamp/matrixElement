@@ -30,11 +30,18 @@ func GetUserById(c *gin.Context) {
 func GetUsers(c *gin.Context) {
 	count := c.Query("count")
 	i, _ := strconv.Atoi(count)
-	c.JSON(200, gin.H{
-		"code":   200,
-		"type":   "GetUsers",
-		"length": i,
-	})
+	var db = models.User{}
+	if users, err := db.GetUsersWithoutUsed(i); err != nil {
+		utils.Logger.Println(err)
+	} else {
+		c.JSON(200, gin.H{
+			"code":   200,
+			"type":   "GetUsers",
+			"length": len(users),
+			"data":   users,
+		})
+	}
+
 }
 
 func AddUser(c *gin.Context) {
@@ -94,6 +101,7 @@ func AddUsers(c *gin.Context) {
 	var db = models.User{}
 	//处理数据
 	if users, err = db.GetUsers(); err != nil {
+		log.Fatal(err)
 		c.JSON(http.StatusOK, gin.H{
 			"status": http.StatusNotFound,
 			"type":   "AddUsers",
@@ -101,7 +109,7 @@ func AddUsers(c *gin.Context) {
 			"msg":    "error",
 			// "user": nameList.
 		})
-		log.Fatal(err)
+
 		return
 	}
 
@@ -124,6 +132,8 @@ func AddUsers(c *gin.Context) {
 				tmp = append(tmp, u)
 			}
 		}
+	} else {
+		tmp = append(tmp, nameArr...)
 	}
 	if len(tmp) <= 0 {
 		c.JSON(http.StatusOK, gin.H{
@@ -151,11 +161,27 @@ func AddUsers(c *gin.Context) {
 	})
 }
 
+//更新状态
 func UpdateUser(c *gin.Context) {
-	user := c.PostForm("user")
+	name := c.PostForm("name")
+	var db = models.User{}
+	user, err := db.GetUserDataByName(name)
+	if err != nil {
+		utils.Logger.Println(err)
+		c.JSON(http.StatusOK, gin.H{
+			"status": http.StatusBadRequest,
+			"type":   "UpdateUser",
+			"msg":    "error",
+			"user":   user,
+		})
+		return
+	}
+	user.Status = 1
+	db.Update(user)
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"type":   "UpdateUser",
+		"msg":    "success",
 		"user":   user,
 	})
 }
