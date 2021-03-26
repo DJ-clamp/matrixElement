@@ -24,7 +24,7 @@ func init() {
 }
 
 func DebugInfo(ctx ...interface{}) {
-	debug, _ = strconv.ParseBool(GetEnv("DEBUG", "false"))
+	debug, _ = strconv.ParseBool(Global.GetEnv("DEBUG", "false"))
 	if debug {
 		ctx = append([]interface{}{"[D]"}, ctx...)
 		Logger.Println(ctx...)
@@ -32,14 +32,14 @@ func DebugInfo(ctx ...interface{}) {
 }
 
 func Debugf(f string, ctx ...interface{}) {
-	debug, _ = strconv.ParseBool(GetEnv("DEBUG", "false"))
+	debug, _ = strconv.ParseBool(Global.GetEnv("DEBUG", "false"))
 	if debug {
 		Logger.Printf(f, ctx...)
 	}
 }
 
 func Info(ctx ...interface{}) {
-	debug, _ = strconv.ParseBool(GetEnv("DEBUG", "false"))
+	debug, _ = strconv.ParseBool(Global.GetEnv("DEBUG", "false"))
 	if debug {
 		ctx = append([]interface{}{"[I]"}, ctx...)
 		Logger.Println(ctx...)
@@ -47,7 +47,7 @@ func Info(ctx ...interface{}) {
 }
 
 func Warning(ctx ...interface{}) {
-	debug, _ = strconv.ParseBool(GetEnv("DEBUG", "false"))
+	debug, _ = strconv.ParseBool(Global.GetEnv("DEBUG", "false"))
 	if debug {
 		ctx = append([]interface{}{"[W]"}, ctx...)
 		Logger.Println(ctx...)
@@ -55,7 +55,7 @@ func Warning(ctx ...interface{}) {
 }
 
 func Error(ctx ...interface{}) {
-	debug, _ = strconv.ParseBool(GetEnv("DEBUG", "false"))
+	debug, _ = strconv.ParseBool(Global.GetEnv("DEBUG", "false"))
 	if debug {
 		ctx = append([]interface{}{"[E]"}, ctx...)
 		Logger.Println(ctx...)
