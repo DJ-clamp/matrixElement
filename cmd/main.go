@@ -5,9 +5,8 @@ import (
 )
 
 var (
-	comit            = ""
-	compiled         = ""
-	HTTP_PORT string = ""
+	comit    = ""
+	compiled = ""
 )
 
 func main() {
