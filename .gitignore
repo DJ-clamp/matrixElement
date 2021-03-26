@@ -194,3 +194,4 @@ cover.out
 *.7z
 .env
 Log.txt
+db.db

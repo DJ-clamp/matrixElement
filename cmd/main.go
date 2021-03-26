@@ -5,12 +5,14 @@ import (
 
 	. "github.com/DJ-clamp/matrixElement/common"
 	"github.com/DJ-clamp/matrixElement/routers"
+	"gorm.io/gorm"
 )
 
 var (
 	commit   = ""
 	compiled = ""
 )
+var db *gorm.DB
 
 func main() {
 	println("----matrixElement----")

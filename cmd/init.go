@@ -4,16 +4,20 @@ import (
 	"flag"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/DJ-clamp/matrixElement/models"
+	"github.com/DJ-clamp/matrixElement/utils"
 	"github.com/joho/godotenv"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 var (
-	HTTP_PORT string = ""
-	DB_NAME   string = ""
+	HTTP_PORT    string = ""
+	DB_NAME      string = ""
+	LoggerPrefix string = "[ME]"
 )
 
 func init() {
@@ -22,24 +26,49 @@ func init() {
 		log.Fatal("Error loading .env file!")
 	}
 	HTTP_PORT = os.Getenv("HTTP_PORT")
-	DB_NAME = os.Getenv("DB_NAME")
+	//数据库出手啊
+	initDB()
 	isAutoMigrate := flag.Bool("migrate", false, "auto migrate database")
 	flag.Parse()
-	initDB()
 	if *isAutoMigrate {
 		defer os.Exit(0)
 		RunDBCommand()
 	}
+	//初始化日志
+	loadLogger()
+	//程序退出操作
+	endInit()
 
 }
 
-func initDB() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open(DB_NAME), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
-	db.AutoMigrate(models.User{})
-	return db
+func initDB() {
+	timeout := make(chan *gorm.DB)
+	go func() {
+		select {
+		case <-time.After(time.Second * 15):
+			log.Println("DB connection timeout")
+			os.Exit(syscall.AF_UNSPEC)
+		case <-timeout:
+			return
+		}
+	}()
+	db := models.InitDB()
+	timeout <- db
+}
+
+func endInit() {
+	signal1 := make(chan os.Signal, 1)
+	signal.Notify(signal1, os.Interrupt)
+	go func() {
+		for range signal1 {
+			utils.Logger.Println("Bye bye")
+			os.Exit(0)
+		}
+	}()
+}
+
+func loadLogger() {
+	utils.Logger.SetPrefix(LoggerPrefix)
 }
 
 //主HTTP服务
