@@ -12,7 +12,7 @@ import (
 
 var (
 	DB      *gorm.DB
-	DB_NAME string
+	DB_NAME string = "db.db"
 )
 
 type BaseModel struct {
@@ -24,9 +24,11 @@ type BaseModel struct {
 func InitDB() *gorm.DB {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file!")
+		log.Println("Error loading .env file!")
+	} else {
+
+		DB_NAME = os.Getenv("DB_NAME")
 	}
-	DB_NAME = os.Getenv("DB_NAME")
 	DB, err = gorm.Open(sqlite.Open(DB_NAME), &gorm.Config{})
 	if err != nil {
 		panic("failed to connsect database")

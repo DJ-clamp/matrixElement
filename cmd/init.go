@@ -15,17 +15,17 @@ import (
 )
 
 var (
-	HTTP_PORT    string = ""
-	DB_NAME      string = ""
+	HTTP_PORT    string = "80"
 	LoggerPrefix string = "[ME]"
 )
 
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file!")
+		log.Println("Error loading .env file!")
+	} else {
+		HTTP_PORT = os.Getenv("HTTP_PORT")
 	}
-	HTTP_PORT = os.Getenv("HTTP_PORT")
 	//数据库出手啊
 	initDB()
 	isAutoMigrate := flag.Bool("migrate", false, "auto migrate database")
