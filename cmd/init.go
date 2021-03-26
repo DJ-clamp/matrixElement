@@ -1,11 +1,11 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 
-	"github.com/DJ-clamp/matrixElement/routers"
-	"github.com/gin-gonic/gin"
+	"github.com/DJ-clamp/matrixElement/models"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -23,6 +23,13 @@ func init() {
 	}
 	HTTP_PORT = os.Getenv("HTTP_PORT")
 	DB_NAME = os.Getenv("DB_NAME")
+	isAutoMigrate := flag.Bool("migrate", false, "auto migrate database")
+	flag.Parse()
+	initDB()
+	if *isAutoMigrate {
+		defer os.Exit(0)
+		RunDBCommand()
+	}
 
 }
 
@@ -31,12 +38,19 @@ func initDB() *gorm.DB {
 	if err != nil {
 		panic("failed to connect database")
 	}
+	db.AutoMigrate(models.User{})
 	return db
 }
 
 //主HTTP服务
-func initMainHTTP() *gin.Engine {
-	hp := gin.Default()
-	routers.StartPage(hp)
-	return hp
+// func initMainHTTP() *gin.Engine {
+// 	hp := gin.Default()
+// 	routers.StartPage(hp)
+// 	return hp
+// }
+
+//RunDBCommand 数据库迁移
+func RunDBCommand() {
+	models.AddTables()
+	models.Migrate(models.TableList)
 }

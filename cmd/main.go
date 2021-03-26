@@ -5,7 +5,6 @@ import (
 
 	. "github.com/DJ-clamp/matrixElement/common"
 	"github.com/DJ-clamp/matrixElement/routers"
-	"github.com/DJ-clamp/matrixElement/utils"
 )
 
 var (
@@ -14,9 +13,8 @@ var (
 )
 
 func main() {
-	utils.Logger.Println("----matrixElement----")
-	utils.Logger.Println("build:", compiled, "commit:", commit)
-	initDB()
+	println("----matrixElement----")
+	println("build:", compiled, "commit:", commit)
 	NewServer(fmt.Sprintf(":%s", HTTP_PORT),
 		BootingErrorLog("Severice is failed.: %v"),
 		BootingLog("HTTP is works"),
