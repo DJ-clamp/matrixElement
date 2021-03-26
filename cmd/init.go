@@ -37,6 +37,6 @@ func initDB() *gorm.DB {
 //主HTTP服务
 func initMainHTTP() *gin.Engine {
 	hp := gin.Default()
-	hp.GET("/", routers.Index)
+	routers.StartPage(hp)
 	return hp
 }
