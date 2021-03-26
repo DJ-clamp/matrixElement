@@ -3,6 +3,7 @@ package routers
 import (
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -23,6 +24,16 @@ func GetUserById(c *gin.Context) {
 		"code": 200,
 		"msg":  "GetUserById",
 		"name": name,
+	})
+}
+
+func GetUsers(c *gin.Context) {
+	count := c.Query("count")
+	i, _ := strconv.Atoi(count)
+	c.JSON(200, gin.H{
+		"code":   200,
+		"type":   "GetUsers",
+		"length": i,
 	})
 }
 
