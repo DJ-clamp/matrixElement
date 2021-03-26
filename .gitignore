@@ -195,3 +195,5 @@ cover.out
 .env
 Log.txt
 db.db
+*.db
+db.db
