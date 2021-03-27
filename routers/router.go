@@ -227,11 +227,34 @@ func UpdateUser(c *gin.Context) {
 }
 
 func DeleteUser(c *gin.Context) {
-	user := c.PostForm("user")
+	user := c.PostForm("name")
 	c.JSON(http.StatusOK, gin.H{
 		"code": http.StatusOK,
 		"type": "DeleteUser",
 		"msg":  "success",
 		"user": user,
 	})
+}
+
+func ResetUsers(c *gin.Context) {
+	user := c.PostForm("name")
+	if user != "" {
+		var db = models.User{}
+		users, err := db.GetUsersWithoutStatus(0)
+		if err != nil {
+			utils.Logger.Println(err)
+		}
+		for _, user := range users {
+			user.Status = 1
+			if err := db.Update(user); err != nil {
+				utils.Logger.Println(err)
+			}
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"type": "ResetUsers",
+			"msg":  "success",
+			"user": user,
+		})
+	}
 }

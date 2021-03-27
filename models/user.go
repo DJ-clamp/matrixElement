@@ -31,6 +31,12 @@ func (user User) GetUsersWithoutUsed(count int) ([]User, error) {
 	return users, result.Error
 }
 
+func (user User) GetUsersWithoutStatus(status int) ([]User, error) {
+	var users []User
+	result := DB.Where("status <> ?", status).Find(&users)
+	return users, result.Error
+}
+
 func (User) GetUserDataById(id string) (*User, error) {
 	pid, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
