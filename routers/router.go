@@ -34,6 +34,11 @@ func GetUsers(c *gin.Context) {
 	if users, err := db.GetUsersWithoutUsed(i); err != nil {
 		utils.Logger.Println(err)
 	} else {
+		//changed status = 2 for users
+		for _, user := range users {
+			user.Status = 2
+			db.Update(user)
+		}
 		c.JSON(200, gin.H{
 			"code":   200,
 			"type":   "GetUsers",
