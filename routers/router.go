@@ -47,9 +47,18 @@ func GetUsers(c *gin.Context) {
 func AddUser(c *gin.Context) {
 	name := c.PostForm("name")
 	user := models.User{Name: name, Status: 0, ActivatedAt: time.Now()}
-	if data, err := user.GetUserDataByName(name); err != nil {
-		utils.Logger.Fatalln(err)
-		return
+	data, isok := user.GetUserDataByName(name)
+	if isok != nil {
+		utils.Logger.Println(isok)
+		if err := user.Create(); err != nil {
+			utils.Logger.Println(err)
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"status": http.StatusOK,
+			"type":   "AddUser",
+			"user":   user,
+		})
+
 	} else {
 		if data != nil {
 			c.JSON(http.StatusOK, gin.H{
@@ -60,14 +69,6 @@ func AddUser(c *gin.Context) {
 			})
 		} else {
 
-			if err := user.Create(); err != nil {
-				utils.Logger.Println(err)
-			}
-			c.JSON(http.StatusOK, gin.H{
-				"status": http.StatusOK,
-				"type":   "AddUser",
-				"user":   user,
-			})
 		}
 	}
 }
