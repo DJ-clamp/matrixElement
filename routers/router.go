@@ -22,7 +22,7 @@ func GetUserById(c *gin.Context) {
 	name := c.Param("name")
 	c.JSON(200, gin.H{
 		"code": 200,
-		"msg":  "GetUserById",
+		"type": "GetUserById",
 		"name": name,
 	})
 }
@@ -46,6 +46,9 @@ func GetUsers(c *gin.Context) {
 
 func AddUser(c *gin.Context) {
 	name := c.PostForm("name")
+	if len(name) != 11 {
+		return
+	}
 	user := models.User{Name: name, Status: 0, ActivatedAt: time.Now()}
 	data, isok := user.GetUserDataByName(name)
 	if isok != nil {
@@ -54,21 +57,21 @@ func AddUser(c *gin.Context) {
 			utils.Logger.Println(err)
 		}
 		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusOK,
+			"code":   http.StatusOK,
 			"type":   "AddUser",
-			"user":   user,
+			"msg":    "",
+			"length": 1,
+			"data":   user,
 		})
 
 	} else {
 		if data != nil {
 			c.JSON(http.StatusOK, gin.H{
-				"status": http.StatusCreated,
-				"type":   "AddUser",
-				"msg":    "the use has existed",
-				"user":   data,
+				"code": http.StatusCreated,
+				"type": "AddUser",
+				"msg":  "the use has existed",
+				"data": data,
 			})
-		} else {
-
 		}
 	}
 }
@@ -104,13 +107,12 @@ func AddUsers(c *gin.Context) {
 	if users, err = db.GetUsers(); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusNotFound,
+			"code":   http.StatusNotFound,
 			"type":   "AddUsers",
 			"length": 0,
 			"msg":    "error",
 			// "user": nameList.
 		})
-
 		return
 	}
 
@@ -138,7 +140,7 @@ func AddUsers(c *gin.Context) {
 	}
 	if len(tmp) <= 0 {
 		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusNotFound,
+			"code":   http.StatusNotFound,
 			"type":   "AddUsers",
 			"length": len(tmp),
 			"msg":    "error",
@@ -155,7 +157,7 @@ func AddUsers(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
+		"code":   http.StatusOK,
 		"type":   "AddUsers",
 		"length": len(nameArr),
 		"msg":    "success",
@@ -170,28 +172,29 @@ func UpdateUser(c *gin.Context) {
 	if err != nil {
 		utils.Logger.Println(err)
 		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusBadRequest,
-			"type":   "UpdateUser",
-			"msg":    "error",
-			"user":   user,
+			"code": http.StatusBadRequest,
+			"type": "UpdateUser",
+			"msg":  "error",
+			"user": user,
 		})
 		return
 	}
 	user.Status = 1
 	db.Update(user)
 	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
-		"type":   "UpdateUser",
-		"msg":    "success",
-		"user":   user,
+		"code": http.StatusOK,
+		"type": "UpdateUser",
+		"msg":  "success",
+		"user": user,
 	})
 }
 
 func DeleteUser(c *gin.Context) {
 	user := c.PostForm("user")
 	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
-		"type":   "DeleteUser",
-		"user":   user,
+		"code": http.StatusOK,
+		"type": "DeleteUser",
+		"msg":  "success",
+		"user": user,
 	})
 }
