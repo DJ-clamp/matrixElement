@@ -139,6 +139,9 @@ func AddUsers(c *gin.Context) {
 		// }
 
 		for _, u := range nameArr {
+			if len(u) != 11 {
+				continue
+			}
 			var isContained bool = false
 			for _, user := range users {
 				if u == user.Name {
@@ -163,19 +166,29 @@ func AddUsers(c *gin.Context) {
 		return
 	}
 	var newUsers []models.User
-	for _, n := range tmp {
-		newUsers = append(newUsers, models.User{Name: n, Status: 0, ActivatedAt: time.Now()})
+	if len(tmp) <= 10 {
+		for _, n := range tmp {
+			newUsers = append(newUsers, models.User{Name: n, Status: 0, ActivatedAt: time.Now()})
+		}
+		if err := db.CreateAll(newUsers); err != nil {
+			utils.Logger.Println(err)
+			return
+		}
+	} else {
+		for _, n := range tmp {
+			newUsers := models.User{Name: n, Status: 0, ActivatedAt: time.Now()}
+			if err := newUsers.Create(); err != nil {
+				utils.Logger.Println(err)
+			}
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"code":   http.StatusOK,
+			"type":   "AddUsers",
+			"length": len(tmp),
+			"msg":    "success",
+		})
 	}
-	if err := db.CreateAll(newUsers); err != nil {
-		utils.Logger.Println(err)
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"code":   http.StatusOK,
-		"type":   "AddUsers",
-		"length": len(nameArr),
-		"msg":    "success",
-	})
+
 }
 
 //更新状态
