@@ -47,6 +47,13 @@ func GetUsers(c *gin.Context) {
 func AddUser(c *gin.Context) {
 	name := c.PostForm("name")
 	if len(name) != 11 {
+		c.JSON(http.StatusOK, gin.H{
+			"code":   http.StatusBadRequest,
+			"type":   "AddUser",
+			"msg":    "error",
+			"length": 0,
+			"data":   "",
+		})
 		return
 	}
 	user := models.User{Name: name, Status: 0, ActivatedAt: time.Now()}
