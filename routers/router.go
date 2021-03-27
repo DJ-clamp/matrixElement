@@ -175,12 +175,14 @@ func AddUsers(c *gin.Context) {
 			return
 		}
 	} else {
-		for _, n := range tmp {
-			newUsers := models.User{Name: n, Status: 0, ActivatedAt: time.Now()}
-			if err := newUsers.Create(); err != nil {
-				utils.Logger.Println(err)
+		go func() {
+			for _, n := range tmp {
+				newUsers := models.User{Name: n, Status: 0, ActivatedAt: time.Now()}
+				if err := newUsers.Create(); err != nil {
+					utils.Logger.Println(err)
+				}
 			}
-		}
+		}()
 		c.JSON(http.StatusOK, gin.H{
 			"code":   http.StatusOK,
 			"type":   "AddUsers",
