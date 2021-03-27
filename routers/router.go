@@ -102,7 +102,7 @@ func AddUsers(c *gin.Context) {
 	var db = models.User{}
 	//处理数据
 	if users, err = db.GetUsers(); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.JSON(http.StatusOK, gin.H{
 			"status": http.StatusNotFound,
 			"type":   "AddUsers",
