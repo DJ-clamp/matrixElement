@@ -37,7 +37,9 @@ func GetUsers(c *gin.Context) {
 		//changed status = 2 for users
 		for _, user := range users {
 			user.Status = 2
-			db.Update(user)
+			if err = db.Update(user); err != nil {
+				utils.Logger.Println(err)
+			}
 		}
 		c.JSON(200, gin.H{
 			"code":   200,
@@ -186,19 +188,27 @@ func UpdateUser(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"code": http.StatusBadRequest,
 			"type": "UpdateUser",
-			"msg":  "error",
+			"msg":  err,
 			"user": user,
 		})
 		return
 	}
 	user.Status = 1
-	db.Update(user)
-	c.JSON(http.StatusOK, gin.H{
-		"code": http.StatusOK,
-		"type": "UpdateUser",
-		"msg":  "success",
-		"user": user,
-	})
+	if err := db.Update(user); err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"type": "UpdateUser",
+			"msg":  err,
+			"user": user,
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code": http.StatusOK,
+			"type": "UpdateUser",
+			"msg":  "success",
+			"user": user,
+		})
+	}
 }
 
 func DeleteUser(c *gin.Context) {
