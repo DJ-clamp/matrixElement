@@ -249,7 +249,7 @@ func ResetUsers(c *gin.Context) {
 			now := time.Now().Day()
 			old := user.UpdatedAt.Day()
 			if old != now {
-				user.Status = uint(i)
+				user.Status = 0
 				if err := db.Update(user); err != nil {
 					utils.Logger.Println(err)
 				}
