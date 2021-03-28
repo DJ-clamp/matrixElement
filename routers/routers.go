@@ -12,4 +12,5 @@ func StartPage(router *gin.Engine) {
 	router.POST("/addAll", AddUsers)
 	router.POST("/update", UpdateUser)
 	router.GET("/delete", DeleteUser)
+	router.POST("/reset", ResetUsers)
 }

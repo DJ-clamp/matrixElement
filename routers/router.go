@@ -245,10 +245,12 @@ func ResetUsers(c *gin.Context) {
 		if err != nil {
 			utils.Logger.Println(err)
 		}
+		var s int
 		for _, user := range users {
 			now := time.Now().Day()
 			old := user.UpdatedAt.Day()
 			if old != now {
+				s++
 				user.Status = 0
 				if err := db.Update(user); err != nil {
 					utils.Logger.Println(err)
@@ -260,6 +262,7 @@ func ResetUsers(c *gin.Context) {
 			"code":   http.StatusOK,
 			"type":   "ResetUsers",
 			"msg":    "success",
+			"length": s,
 			"status": status,
 		})
 	}
