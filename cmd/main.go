@@ -18,7 +18,7 @@ func main() {
 	NewServer(fmt.Sprintf(":%s", HTTP_PORT),
 		BootingErrorLog("Severice is failed.: %v"),
 		BootingLog("HTTP is works"),
-		DebugMode(true),
+		DebugMode(APP_DEBUG),
 		TimeOut(10),
 		AddRouters(routers.StartPage),
 	)

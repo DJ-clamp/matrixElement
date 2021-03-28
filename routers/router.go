@@ -237,10 +237,11 @@ func DeleteUser(c *gin.Context) {
 }
 
 func ResetUsers(c *gin.Context) {
-	user := c.PostForm("name")
-	if user != "" {
+	status := c.PostForm("status")
+	i, _ := strconv.Atoi(status)
+	if status != "" {
 		var db = models.User{}
-		users, err := db.GetUsersWithoutStatus(0)
+		users, err := db.GetUsersWithStatus(i)
 		if err != nil {
 			utils.Logger.Println(err)
 		}
@@ -251,10 +252,10 @@ func ResetUsers(c *gin.Context) {
 			}
 		}
 		c.JSON(http.StatusOK, gin.H{
-			"code": http.StatusOK,
-			"type": "ResetUsers",
-			"msg":  "success",
-			"user": user,
+			"code":   http.StatusOK,
+			"type":   "ResetUsers",
+			"msg":    "success",
+			"status": status,
 		})
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -17,6 +18,7 @@ import (
 var (
 	HTTP_PORT    string = "80"
 	LoggerPrefix string = "[ME]"
+	APP_DEBUG    bool   = false
 )
 
 func init() {
@@ -25,6 +27,8 @@ func init() {
 		log.Println("Error loading .env file!")
 	} else {
 		HTTP_PORT = os.Getenv("HTTP_PORT")
+		debug := os.Getenv("APP_DEBUG")
+		APP_DEBUG, err = strconv.ParseBool(debug)
 	}
 	//数据库出手啊
 	initDB()

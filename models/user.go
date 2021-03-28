@@ -31,9 +31,9 @@ func (user User) GetUsersWithoutUsed(count int) ([]User, error) {
 	return users, result.Error
 }
 
-func (user User) GetUsersWithoutStatus(status int) ([]User, error) {
+func (user User) GetUsersWithStatus(status int) ([]User, error) {
 	var users []User
-	result := DB.Where("status <> ?", status).Find(&users)
+	result := DB.Where("status = ?", status).Find(&users)
 	return users, result.Error
 }
 
